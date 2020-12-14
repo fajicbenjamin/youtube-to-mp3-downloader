@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "electron": "^11.0.4",
-    "electron-packager": "^12.1.0"
+    "electron-packager": "^15.2.0"
   },
   "dependencies": {
     "axios": "^0.21.0",

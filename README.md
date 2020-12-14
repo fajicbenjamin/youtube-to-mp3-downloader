@@ -6,7 +6,7 @@
 
 This is a minimal Electron application based on the [Quick Start Guide](https://electronjs.org/docs/tutorial/quick-start) within the Electron documentation.
 
-It takes YouTube song URL as input and download that to MP3 to your computer, with some tags on the file as well (i.e. cover artwork, artist, album, etc.)
+It takes YouTube song url and downloads it as .mp3 file to your computer. Files  are automatically tagged with cover artwork, artist, and other MP3 tags.
 
 If you already have downloaded bunch of MP3s that you want to tag with tags, you can use this [project](https://github.com/fajicbenjamin/mp3-metadata-app) instead.
 
