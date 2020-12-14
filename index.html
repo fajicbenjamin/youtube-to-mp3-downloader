@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <title>Hello World!</title>
+
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+  <div class="blurred-box">
+    <div id="heading">Youtube to MP3 downloader</div>
+
+    <div class="download">
+      <input id="url-input" type="text" placeholder="https://youtube.com">
+      <button id="download-button" onclick="startDownload()">Download</button>
+    </div>
+
+    <div id="status"></div>
+
+    <div class="meter">
+      <span id="progress-bar"></span>
+    </div>
+
+    <!-- You can also require other files to run in this process -->
+    <script src="./renderer.js"></script>
+
+  </div>
+  </body>
+</html>
