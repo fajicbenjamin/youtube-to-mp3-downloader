@@ -47,29 +47,12 @@ const getVideoAsMp4 = (urlLink, userProvidedPath, title, event) => {
         let videoObject = ytdl(urlLink, {filter: 'audioonly'});
 
         videoObject.on('progress', (chunkLength, downloaded, total) => {
-            // When the stream emits a progress event, we capture the currently downloaded amount and the total
-            // to download, we then divided the downloaded by the total and multiply the result to get a float of
-            // the percent complete, which is then passed through the Math.floor function to drop the decimals.
-            // if (!this.rateLimitTriggered) {
-                let newVal = Math.floor((downloaded / total) * 100);
-                // this.setState({progress: newVal});
-
+            let newVal = Math.floor((downloaded / total) * 100);
             event.sender.send('progress-status', newVal);
-
-                // Set the rate limit trigger to true and set a timeout to set it back to false. This will prevent the UI
-                // from updating every few milliseconds and creating visual lag.
-                // this.rateLimitTriggered = true;
-                // setTimeout(() => {
-                //     this.rateLimitTriggered = false;
-                // }, 800);
-            // }
         });
 
         // Create write-able stream for the temp file and pipe the video stream into it.
         videoObject.pipe(fs.createWriteStream(fullPath)).on('finish', () => {
-            // all of the video stream has finished piping, set the progress bar to 100% and give user pause to see the
-            // completion of step. Then we return the path to the temp file, the output path, and the desired filename.
-            // this.setState({progress: 100});
             setTimeout(() => {
                 resolve({filePath: fullPath, folderPath: userProvidedPath, fileTitle: `${title}.mp3`});
             }, 1000);
@@ -92,19 +75,10 @@ const convertMp4ToMp3 = (paths, event) => {
             .format('mp3')
             .audioBitrate(320)
             .on('progress', (progress) => {
-                // Use same rate limiting as above in function "getVideoAsMp4()" to prevent UI lag.
-                // if (!this.rateLimitTriggered) {
                 event.sender.send('progress-status', Math.floor(progress.percent));
-                //     this.rateLimitTriggered = true;
-                //     setTimeout(() => {
-                //         this.rateLimitTriggered = false;
-                //     }, 800);
-                // }
             })
             .output(fs.createWriteStream(path.join(paths.folderPath, sanitize(paths.fileTitle))))
             .on('end', () => {
-                // After the mp3 is wrote to the disk we set the progress to 99% the last 1% is the removal of the temp file.
-                // this.setState({progress: 99});
                 resolve();
             })
             .run();
