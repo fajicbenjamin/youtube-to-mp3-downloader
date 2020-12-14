@@ -86,8 +86,6 @@ const convertMp4ToMp3 = (paths, event) => {
         // Reset the rate limiting trigger just encase.
         this.rateLimitTriggered = false;
 
-        console.log(paths.filePath)
-
         // Pass ffmpeg the temp mp4 file. Set the path where is ffmpeg binary for the platform. Provided desired format.
         ffmpeg(paths.filePath)
             .setFfmpegPath(binaries.ffmpegPath())
