@@ -8,7 +8,7 @@ This is a minimal Electron application based on the [Quick Start Guide](https://
 
 It takes YouTube song url and downloads it as .mp3 file to your computer. Files  are automatically tagged with cover artwork, artist, and other MP3 tags.
 
-If you already have downloaded bunch of MP3s that you want to tag with tags, you can use this [project](https://github.com/fajicbenjamin/mp3-metadata-app) instead.
+If you already have downloaded bunch of MP3s that you want to write tags to, you can use this [project](https://github.com/fajicbenjamin/mp3-metadata-app) instead.
 
 ## To Use
 
@@ -19,7 +19,7 @@ To clone and run this repository you'll need [Git](https://git-scm.com) and [Nod
 git clone https://github.com/fajicbenjamin/youtube-to-mp3-downloader.git
 
 # Go into the repository
-cd electron-quick-start
+cd youtube-to-mp3-downloader
 
 # Install dependencies
 npm install
