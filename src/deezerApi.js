@@ -9,7 +9,7 @@ const getSongData = async (songName) => {
     }
 
     let songData = response.data.data[0];
-    let artist = await getTrackContributors(songData.id).catch(error => console.error(error));
+    let artist = await getTrackContributors(songData.id);
 
     return {
         artist: artist,

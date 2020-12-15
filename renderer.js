@@ -13,7 +13,7 @@ let progressBarDiv = document.getElementsByClassName('meter')[0];
 let progressBar = document.getElementById('progress-bar');
 
 document.getElementById('download-button').addEventListener("click", function() {
-    document.getElementById('status').innerHTML = 'Starting';
+    document.getElementById('status').innerHTML = 'Initializing';
     ipcRenderer.send('download-invoked', document.getElementById('url-input').value)
 });
 
