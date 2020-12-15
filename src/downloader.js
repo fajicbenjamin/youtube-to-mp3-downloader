@@ -12,14 +12,26 @@ const deezerApi = require('./deezerApi');
 const startDownload = async (url, event) => {
 
     let info = await ytdl.getInfo(url);
-    let title = `${info.videoDetails.media.artist} - ${info.videoDetails.media.song}`;
+    let title = '';
+
+    if (info.videoDetails.media.song)
+        title = `${info.videoDetails.media.artist} - ${info.videoDetails.media.song}`;
+    else
+        title = sanitize(escape(info.videoDetails.title.replace(/ *\([^)]*\) */g, "")));
+
+    let songDataFromDeezer = await deezerApi.getSongData(title);
+
+    if (songDataFromDeezer)
+        title = `${songDataFromDeezer.artist} - ${songDataFromDeezer.title}`;
+    else
+        title = info.videoDetails.title; // use video title as file title
 
     let downloadPath = electron.app.getPath('downloads');
 
     // Given the url of the video, the path in which to store the output, and the video title
     // download the video as an audio only mp4 and write it to a temp file then return
     // the full path for the tmp file, the path in which its stored, and the title of the desired output.
-    let paths = await getVideoAsMp4(url, downloadPath, title, event).catch(error => console.error(error));
+    let paths = await getVideoAsMp4(url, downloadPath, title, event);
 
     // Pass the returned paths and info into the function which will convert the mp4 tmp file into
     // the desired output mp3 file.
@@ -29,8 +41,10 @@ const startDownload = async (url, event) => {
     fs.unlinkSync(paths.filePath);
 
     // write mp3 tags to file
-    event.sender.send('download-status', 'Writing MP3 tags');
-    await writeMp3TagsToFile(paths);
+    if (songDataFromDeezer) {
+        event.sender.send('download-status', 'Writing MP3 tags');
+        await writeMp3TagsToFile(paths, songDataFromDeezer);
+    }
 
     event.sender.send('download-status', 'Done');
 };
@@ -38,7 +52,6 @@ const startDownload = async (url, event) => {
 const getVideoAsMp4 = (urlLink, userProvidedPath, title, event) => {
     // Tell the user we are starting to get the video.
     event.sender.send('download-status', 'Downloading...');
-    title = sanitize(title);
 
     return new Promise((resolve, reject) => {
         let fullPath = path.join(userProvidedPath, `tmp_${title}.mp4`);
@@ -79,16 +92,14 @@ const convertMp4ToMp3 = (paths, event) => {
             })
             .output(fs.createWriteStream(path.join(paths.folderPath, sanitize(paths.fileTitle))))
             .on('end', () => {
+                event.sender.send('progress-status', 100);
                 resolve();
             })
             .run();
     });
 };
 
-const writeMp3TagsToFile = async (paths) => {
-    let songName = paths.fileTitle.substr(0, paths.fileTitle.length - 4);
-
-    let songData = await deezerApi.getSongData(songName);
+const writeMp3TagsToFile = async (paths, songData) => {
     let coverImage = await deezerApi.getCoverImage(songData.cover);
 
     let image = {
