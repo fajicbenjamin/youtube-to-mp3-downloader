@@ -10,12 +10,26 @@
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-  <div class="blurred-box">
     <div id="heading">Youtube to MP3 downloader</div>
 
     <div class="download">
       <input id="url-input" type="text" placeholder="https://youtube.com">
       <button id="download-button" onclick="startDownload()">Download</button>
+
+      <div class="mp3-tags">
+        <label for="cover-search">
+          Search for cover
+        </label>
+        <input type="checkbox" id="cover-search">
+        <div id="cover-search-input">
+          <p>
+            Enter artist and song name without any special characters
+            <br>
+            (without parentheses, x or feat between multiple artist, etc.)
+          </p>
+          <input id="cover-search-url" type="text" placeholder="i.e xxxtentacion sad">
+        </div>
+      </div>
     </div>
 
     <div id="status"></div>
@@ -27,6 +41,5 @@
     <!-- You can also require other files to run in this process -->
     <script src="./renderer.js"></script>
 
-  </div>
   </body>
 </html>

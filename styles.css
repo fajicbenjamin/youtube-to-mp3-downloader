@@ -4,7 +4,7 @@ body {
 
 #heading {
     text-align: center;
-    margin: 20% auto 50px auto;
+    margin: 10% auto 50px auto;
     font-size: 1.7em;
     font-weight: 400;
 }
@@ -29,6 +29,18 @@ body {
 
 #progress {
 
+}
+
+.mp3-tags {
+    margin-top: 20px;
+}
+
+#cover-search-input {
+    display: none;
+}
+
+#cover-search-input p {
+    color: gray;
 }
 
 .meter {

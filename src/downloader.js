@@ -1,25 +1,27 @@
 const ffmpeg = require('fluent-ffmpeg');
 const binaries = require('ffmpeg-binaries');
-const sanitize = require('sanitize-filename');
 const fs = require('fs');
 const ytdl = require('ytdl-core');
 const electron = require('electron');
 const path = require('path');
-const NodeID3 = require('node-id3');
+const ID3Writer = require('browser-id3-writer');
 
 const deezerApi = require('./deezerApi');
 
-const startDownload = async (url, event) => {
+const startDownload = async (params, event) => {
 
-    let info = await ytdl.getInfo(url);
+    let info = await ytdl.getInfo(params.url);
     let title = '';
 
     if (info.videoDetails.media.song)
         title = `${info.videoDetails.media.artist} - ${info.videoDetails.media.song}`;
     else
-        title = sanitize(escape(info.videoDetails.title.replace(/ *\([^)]*\) */g, "")));
+        title = escape(info.videoDetails.title.replace(/ *\([^)]*\) */g, ""));
 
-    let songDataFromDeezer = await deezerApi.getSongData(title);
+    let songDataFromDeezer;
+
+    if (params.coverSearch)
+        songDataFromDeezer = await deezerApi.getSongData(title);
 
     if (songDataFromDeezer)
         title = `${songDataFromDeezer.artist} - ${songDataFromDeezer.title}`;
@@ -31,7 +33,7 @@ const startDownload = async (url, event) => {
     // Given the url of the video, the path in which to store the output, and the video title
     // download the video as an audio only mp4 and write it to a temp file then return
     // the full path for the tmp file, the path in which its stored, and the title of the desired output.
-    let paths = await getVideoAsMp4(url, downloadPath, title, event);
+    let paths = await getVideoAsMp4(params.url, downloadPath, title, event);
 
     // Pass the returned paths and info into the function which will convert the mp4 tmp file into
     // the desired output mp3 file.
@@ -79,8 +81,6 @@ const convertMp4ToMp3 = (paths, event) => {
     event.sender.send('progress-status', 0);
 
     return new Promise(async (resolve, reject) => {
-        // Reset the rate limiting trigger just encase.
-        this.rateLimitTriggered = false;
 
         // Pass ffmpeg the temp mp4 file. Set the path where is ffmpeg binary for the platform. Provided desired format.
         ffmpeg(paths.filePath)
@@ -90,7 +90,7 @@ const convertMp4ToMp3 = (paths, event) => {
             .on('progress', (progress) => {
                 event.sender.send('progress-status', Math.floor(progress.percent));
             })
-            .output(fs.createWriteStream(path.join(paths.folderPath, sanitize(paths.fileTitle))))
+            .output(fs.createWriteStream(path.join(paths.folderPath, paths.fileTitle)))
             .on('end', () => {
                 event.sender.send('progress-status', 100);
                 resolve();
@@ -100,27 +100,26 @@ const convertMp4ToMp3 = (paths, event) => {
 };
 
 const writeMp3TagsToFile = async (paths, songData) => {
+
     let coverImage = await deezerApi.getCoverImage(songData.cover);
 
-    let image = {
-        mime: "jpeg",
-        type: {
-            id: 3,
-            name: "front cover"
-        },
-        description: "Song cover",
-        imageBuffer: Buffer.from(coverImage.data)
-    };
+    const songBuffer = fs.readFileSync(path.join(paths.folderPath, paths.fileTitle));
 
-    const tags = {
-        title: songData.title,
-        artist: songData.artist.join(', '),
-        album: songData.album,
-        APIC: songData.cover,
-        image: image
-    };
+    const writer = new ID3Writer(songBuffer);
+    writer.setFrame('TIT2', songData.title)
+        .setFrame('TPE1', songData.artist)
+        .setFrame('TALB', songData.album)
+        .setFrame('APIC', {
+            type: 3,
+            data: Buffer.from(coverImage.data, 'base64'),
+            description: 'Front cover'
+        });
+    writer.addTag();
 
-    NodeID3.write(tags, path.join(paths.folderPath, sanitize(paths.fileTitle)));
+    fs.unlinkSync(path.join(paths.folderPath, paths.fileTitle));
+
+    const taggedSongBuffer = Buffer.from(writer.arrayBuffer);
+    fs.writeFileSync(path.join(paths.folderPath, paths.fileTitle), taggedSongBuffer);
 };
 
 module.exports = {
