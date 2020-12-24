@@ -7,14 +7,24 @@ const {ipcRenderer} = require("electron");
 // selectively enable features needed in the rendering
 // process.
 
-// document.getElementById('status').innerText = '';
-
 let progressBarDiv = document.getElementsByClassName('meter')[0];
 let progressBar = document.getElementById('progress-bar');
 
 document.getElementById('download-button').addEventListener("click", function() {
     document.getElementById('status').innerHTML = 'Initializing';
-    ipcRenderer.send('download-invoked', document.getElementById('url-input').value)
+
+    let params = {
+        url: document.getElementById('url-input').value,
+        coverSearch: false,
+        coverSearchTitle: ''
+    };
+
+    if (document.getElementById('cover-search').checked) {
+        params.coverSearch = true;
+        params.coverSearchTitle = document.getElementById('cover-search-url').innerText;
+    }
+
+    ipcRenderer.send('download-invoked', params)
 });
 
 ipcRenderer.on('download-status', (event, arg) => {
@@ -29,4 +39,13 @@ ipcRenderer.on('progress-status', (event, arg) => {
         progressBarDiv.style.display = 'none';
 
     progressBar.style.width = arg + '%';
+});
+
+document.getElementById('cover-search').addEventListener('click', function () {
+    let searchInputDisplay = document.getElementById('cover-search-input');
+
+    if (searchInputDisplay.style.display === 'none' || searchInputDisplay.style.display === '')
+        searchInputDisplay.style.display = 'inline';
+    else
+        searchInputDisplay.style.display = 'none';
 });

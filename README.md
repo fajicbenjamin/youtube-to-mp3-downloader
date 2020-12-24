@@ -21,6 +21,10 @@ git clone https://github.com/fajicbenjamin/youtube-to-mp3-downloader.git
 # Go into the repository
 cd youtube-to-mp3-downloader
 
+# If you are on Mac make sure you checkout on mac version
+# It uses different ffmpeg binaries
+git checkout mac
+
 # Install dependencies
 npm install
 
@@ -29,3 +33,6 @@ npm start
 ```
 
 Note: If you're using Linux Bash for Windows, [see this guide](https://www.howtogeek.com/261575/how-to-run-graphical-linux-desktop-applications-from-windows-10s-bash-shell/) or use `node` from the command prompt.
+
+# Disclaimer
+This app shouldn't be used on copyrighted material.
