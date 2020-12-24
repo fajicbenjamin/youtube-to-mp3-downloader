@@ -21,7 +21,7 @@ document.getElementById('download-button').addEventListener("click", function() 
 
     if (document.getElementById('cover-search').checked) {
         params.coverSearch = true;
-        params.coverSearchTitle = document.getElementById('cover-search-url').innerText;
+        params.coverSearchTitle = document.getElementById('cover-search-url').value;
     }
 
     ipcRenderer.send('download-invoked', params)

@@ -13,15 +13,10 @@ const startDownload = async (params, event) => {
     let info = await ytdl.getInfo(params.url);
     let title = '';
 
-    if (info.videoDetails.media.song)
-        title = `${info.videoDetails.media.artist} - ${info.videoDetails.media.song}`;
-    else
-        title = escape(info.videoDetails.title.replace(/ *\([^)]*\) */g, ""));
-
     let songDataFromDeezer;
 
     if (params.coverSearch)
-        songDataFromDeezer = await deezerApi.getSongData(title);
+        songDataFromDeezer = await deezerApi.getSongData(params.coverSearchTitle);
 
     if (songDataFromDeezer)
         title = `${songDataFromDeezer.artist} - ${songDataFromDeezer.title}`;
