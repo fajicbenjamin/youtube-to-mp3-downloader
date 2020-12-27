@@ -11,7 +11,7 @@ let progressBarDiv = document.getElementsByClassName('meter')[0];
 let progressBar = document.getElementById('progress-bar');
 
 document.getElementById('download-button').addEventListener("click", function() {
-    document.getElementById('status').innerHTML = 'Initializing';
+    document.getElementById('status').innerText = 'Initializing';
 
     let params = {
         url: document.getElementById('url-input').value,
@@ -27,8 +27,13 @@ document.getElementById('download-button').addEventListener("click", function() 
     ipcRenderer.send('download-invoked', params)
 });
 
-ipcRenderer.on('download-status', (event, arg) => {
-    document.getElementById('status').innerHTML = arg
+ipcRenderer.on('download-status', (event, status, songTitle) => {
+    if (status === 'Done') {
+        new window.Notification('Successful download', {body: `${songTitle} has been successfully downloaded`});
+        document.getElementById('status').innerText = '';
+    } else {
+        document.getElementById('status').innerText = status;
+    }
 });
 
 ipcRenderer.on('progress-status', (event, arg) => {
