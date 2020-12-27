@@ -43,7 +43,7 @@ const startDownload = async (params, event) => {
         await writeMp3TagsToFile(paths, songDataFromDeezer);
     }
 
-    event.sender.send('download-status', 'Done');
+    event.sender.send('download-status', 'Done', title);
 };
 
 const getVideoAsMp4 = (urlLink, userProvidedPath, title, event) => {
