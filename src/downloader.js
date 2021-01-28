@@ -1,5 +1,5 @@
 const ffmpeg = require('fluent-ffmpeg');
-const binaries = require('ffmpeg-binaries');
+const binaries = require('ffmpeg-static');
 const fs = require('fs');
 const ytdl = require('ytdl-core');
 const electron = require('electron');
@@ -79,11 +79,11 @@ const convertMp4ToMp3 = (paths, event) => {
 
         // Pass ffmpeg the temp mp4 file. Set the path where is ffmpeg binary for the platform. Provided desired format.
         ffmpeg(paths.filePath)
-            .setFfmpegPath(binaries.ffmpegPath())
+            .setFfmpegPath(binaries)
             .format('mp3')
             .audioBitrate(320)
             .on('progress', (progress) => {
-                event.sender.send('progress-status', Math.floor(progress.percent));
+                event.sender.send('download-status', `Converting... [${progress.targetSize} kB]`);
             })
             .output(fs.createWriteStream(path.join(paths.folderPath, paths.fileTitle)))
             .on('end', () => {
