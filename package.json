@@ -60,18 +60,17 @@
     "win": {
       "target": [
         "nsis"
-      ],
-      "publish": [
-        "github"
       ]
     },
     "nsis": {
-      "oneClick": false
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
     },
     "publish": {
       "provider": "github",
       "owner": "fajicbenjamin",
-      "repo": "youtube-to-mp3-downloader"
+      "repo": "youtube-to-mp3-downloader",
+      "token": "token"
     }
   }
 }
