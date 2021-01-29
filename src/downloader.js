@@ -1,5 +1,5 @@
 const ffmpeg = require('fluent-ffmpeg');
-const binaries = require('ffmpeg-static');
+const binaries = require('ffmpeg-static').replace('app.asar', 'app.asar.unpacked');
 const fs = require('fs');
 const ytdl = require('ytdl-core');
 const electron = require('electron');

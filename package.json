@@ -1,16 +1,14 @@
 {
   "name": "youtube-to-mp3-downloader",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "A minimal Electron application for downloading MP3s from YouTube",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "package": "npm-run-all package:*",
-    "package:mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --out=out --icon=assets/app-icon/mac/app.icns",
-    "package:win": "electron-packager . --overwrite --platform=win32 --arch=ia32 --out=out --icon=assets/app-icon/win/app.ico",
-    "package:linux": "electron-packager . --overwrite --platform=linux --arch=x64 --out=out"
+    "package": "electron-builder build --publish never"
   },
-  "repository": "https://github.com/fajicbenjamin/youtube-to-mp3-downloader",
+  "repository": "github:fajicbenjamin/youtube-to-mp3-downloader",
+  "license": "MIT",
   "keywords": [
     "Electron",
     "youtube",
@@ -23,7 +21,7 @@
   },
   "devDependencies": {
     "electron": "^11.1.0",
-    "electron-packager": "^15.2.0"
+    "electron-builder": "22.9.1"
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -32,5 +30,48 @@
     "fs-extra": "^7.0.1",
     "browser-id3-writer": "^4.4.0",
     "ytdl-core": "^4.2.1"
+  },
+  "build": {
+    "productName": "Youtube to MP3 Downloader",
+    "copyright": "Copyright © 2021 Benjamin Fajić",
+    "asarUnpack": [
+      "**/app/node_modules/ffmpeg-static/*"
+    ],
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "type": "distribution"
+    },
+    "dmg": {
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "publish": [
+        "github"
+      ]
+    },
+    "nsis": {
+      "oneClick": false
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "fajicbenjamin",
+      "repo": "youtube-to-mp3-downloader"
+    }
   }
 }
