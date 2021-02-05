@@ -18,10 +18,13 @@ const startDownload = async (params, event) => {
     if (params.coverSearch)
         songDataFromDeezer = await deezerApi.getSongData(params.coverSearchTitle);
 
-    if (songDataFromDeezer)
+    if (songDataFromDeezer) {
         title = `${songDataFromDeezer.artist} - ${songDataFromDeezer.title}`;
-    else
+
+        event.sender.send('show-data', songDataFromDeezer);
+    } else {
         title = info.videoDetails.title; // use video title as file title
+    }
 
     let downloadPath = electron.app.getPath('downloads');
 
@@ -58,7 +61,8 @@ const getVideoAsMp4 = (urlLink, userProvidedPath, title, event) => {
 
         videoObject.on('progress', (chunkLength, downloaded, total) => {
             let newVal = Math.floor((downloaded / total) * 100);
-            event.sender.send('progress-status', newVal);
+            // event.sender.send('progress-status', newVal);
+            event.sender.send('download-status', `Downloading... [${newVal}%]`)
         });
 
         // Create write-able stream for the temp file and pipe the video stream into it.
@@ -73,7 +77,7 @@ const getVideoAsMp4 = (urlLink, userProvidedPath, title, event) => {
 const convertMp4ToMp3 = (paths, event) => {
     // Tell the user we are starting to convert the file to mp3.
     event.sender.send('download-status', 'Converting...');
-    event.sender.send('progress-status', 0);
+    // event.sender.send('progress-status', 0);
 
     return new Promise(async (resolve, reject) => {
 
@@ -87,7 +91,7 @@ const convertMp4ToMp3 = (paths, event) => {
             })
             .output(fs.createWriteStream(path.join(paths.folderPath, paths.fileTitle)))
             .on('end', () => {
-                event.sender.send('progress-status', 100);
+                // event.sender.send('progress-status', 100);
                 resolve();
             })
             .run();

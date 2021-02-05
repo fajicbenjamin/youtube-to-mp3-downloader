@@ -7,9 +7,6 @@ const {ipcRenderer} = require("electron");
 // selectively enable features needed in the rendering
 // process.
 
-let progressBarDiv = document.getElementsByClassName('meter')[0];
-let progressBar = document.getElementById('progress-bar');
-
 document.getElementById('download-button').addEventListener("click", function() {
     document.getElementById('status').innerText = 'Initializing';
 
@@ -36,21 +33,21 @@ ipcRenderer.on('download-status', (event, status, songTitle) => {
     }
 });
 
-ipcRenderer.on('progress-status', (event, arg) => {
-    if (progressBarDiv.style.display === 'none' && (arg !== 0 || arg !== 100))
-        progressBarDiv.style.display = 'block';
+ipcRenderer.on('show-data', (event, arg) => {
+    let artworkElement = document.getElementById('song-artwork');
+    let artistElement = document.getElementById('song-artist');
+    let titleElement = document.getElementById('song-title');
 
-    if (arg === 0 || arg === 100)
-        progressBarDiv.style.display = 'none';
-
-    progressBar.style.width = arg + '%';
+    artworkElement.src = arg.cover;
+    artistElement.innerText = arg.artist;
+    titleElement.innerText = arg.title;
 });
 
 document.getElementById('cover-search').addEventListener('click', function () {
     let searchInputDisplay = document.getElementById('cover-search-input');
 
     if (searchInputDisplay.style.display === 'none' || searchInputDisplay.style.display === '')
-        searchInputDisplay.style.display = 'inline';
+        searchInputDisplay.style.display = 'block';
     else
         searchInputDisplay.style.display = 'none';
 });
