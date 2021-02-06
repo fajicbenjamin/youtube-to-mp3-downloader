@@ -20,11 +20,6 @@ function createWindow () {
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
-
-  // Check for updates
-  mainWindow.once('ready-to-show', () => {
-    autoUpdater.checkForUpdatesAndNotify();
-  });
 }
 
 // This method will be called when Electron has finished
@@ -34,10 +29,6 @@ app.whenReady().then(() => {
 
   ipcMain.on('download-invoked', (event, url) => {
     downloader.startDownload(url, event);
-  });
-
-  autoUpdater.on('update-downloaded', () => {
-    BrowserWindow.getFocusedWindow().webContents.send('update_downloaded');
   });
 
   ipcMain.on('restart_app', () => {
@@ -62,3 +53,11 @@ app.on('window-all-closed', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+app.on('ready', function()  {
+  // autoUpdater.checkForUpdates().then()
+  autoUpdater.checkForUpdatesAndNotify();
+
+  autoUpdater.on('update-downloaded', () => {
+    BrowserWindow.getFocusedWindow().webContents.send('update_downloaded');
+  });
+});

@@ -61,6 +61,9 @@
     "win": {
       "target": [
         "nsis"
+      ],
+      "publish": [
+        "github"
       ]
     },
     "nsis": {
@@ -70,8 +73,7 @@
     "publish": {
       "provider": "github",
       "owner": "fajicbenjamin",
-      "repo": "youtube-to-mp3-downloader",
-      "token": "token"
+      "repo": "youtube-to-mp3-downloader"
     }
   }
 }
