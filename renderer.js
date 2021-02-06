@@ -51,3 +51,14 @@ document.getElementById('cover-search').addEventListener('click', function () {
     else
         searchInputDisplay.style.display = 'none';
 });
+
+// updating application
+ipcRenderer.on('update_downloaded', () => {
+    ipcRenderer.removeAllListeners('update_downloaded');
+
+    document.getElementById('update-box').classList.remove('hidden');
+});
+
+document.getElementById('update-button').addEventListener("click", function() {
+    ipcRenderer.send('restart_app');
+});

@@ -1,6 +1,6 @@
 {
   "name": "youtube-to-mp3-downloader",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "A minimal Electron application for downloading MP3s from YouTube",
   "main": "main.js",
   "scripts": {
@@ -25,10 +25,11 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "browser-id3-writer": "^4.4.0",
+    "electron-updater": "^4.3.5",
     "ffmpeg-static": "4.2.7",
     "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^7.0.1",
-    "browser-id3-writer": "^4.4.0",
     "ytdl-core": "4.4.5"
   },
   "build": {
