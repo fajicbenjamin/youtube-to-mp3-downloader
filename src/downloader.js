@@ -19,7 +19,7 @@ const startDownload = async (params, event) => {
         songDataFromDeezer = await deezerApi.getSongData(params.coverSearchTitle);
 
     if (songDataFromDeezer) {
-        title = `${songDataFromDeezer.artist} - ${songDataFromDeezer.title}`;
+        title = `${songDataFromDeezer.artist.join(', ')} - ${songDataFromDeezer.title}`;
 
         event.sender.send('show-data', songDataFromDeezer);
     } else {
