@@ -39,7 +39,7 @@ ipcRenderer.on('show-data', (event, arg) => {
     let titleElement = document.getElementById('song-title');
 
     artworkElement.src = arg.cover;
-    artistElement.innerText = arg.artist;
+    artistElement.innerText = arg.artist.join(', ');
     titleElement.innerText = arg.title;
 });
 
