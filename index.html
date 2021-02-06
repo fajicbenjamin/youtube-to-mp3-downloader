@@ -39,8 +39,7 @@
 
       <div>
         <button class="hover:bg-light-purple-200 hover:text-light-purple-800 rounded-md bg-purple-500 text-white text-sm font-medium px-4 py-2 my-5"
-                id="download-button"
-                onclick="startDownload()">
+                id="download-button">
           Download
         </button>
       </div>
@@ -78,6 +77,14 @@
 
     <div id="status" class="text-center text-sm"></div>
 
+  </div>
+
+  <!-- check for updates -->
+  <div id="update-box" class="fixed bottom-0 right-0 bg-white w-56 shadow-2xl p-2 mr-2 mb-2 rounded hidden">
+    <p class="text-sm">
+      There is update available. Do you want to update it now?
+    </p>
+    <button id="update-button" class="bg-purple-500 text-white text-sm rounded mt-1 p-1 float-right">Update</button>
   </div>
 </div>
 

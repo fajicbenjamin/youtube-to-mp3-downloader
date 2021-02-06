@@ -1,6 +1,7 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, ipcMain} = require('electron')
-const path = require('path')
+const {app, BrowserWindow, ipcMain} = require('electron');
+const path = require('path');
+const { autoUpdater } = require('electron-updater');
 
 const downloader = require('./src/downloader');
 
@@ -19,6 +20,11 @@ function createWindow () {
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
+
+  // Check for updates
+  mainWindow.once('ready-to-show', () => {
+    autoUpdater.checkForUpdatesAndNotify();
+  });
 }
 
 // This method will be called when Electron has finished
@@ -28,6 +34,14 @@ app.whenReady().then(() => {
 
   ipcMain.on('download-invoked', (event, url) => {
     downloader.startDownload(url, event);
+  });
+
+  autoUpdater.on('update-downloaded', () => {
+    BrowserWindow.getFocusedWindow().webContents.send('update_downloaded');
+  });
+
+  ipcMain.on('restart_app', () => {
+    autoUpdater.quitAndInstall();
   });
 
   createWindow()
