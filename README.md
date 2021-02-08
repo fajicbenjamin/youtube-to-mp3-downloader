@@ -2,7 +2,7 @@
 
 # Youtube to MP3 Downloader
 
-**Clone and run for a quick way to see Electron in action.**
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/fajicbenjamin/youtube-to-mp3-downloader) ![GitHub all releases](https://img.shields.io/github/downloads/fajicbenjamin/youtube-to-mp3-downloader/total) ![GitHub](https://img.shields.io/github/license/fajicbenjamin/youtube-to-mp3-downloader)
 
 This is a minimal Electron application based on the [Quick Start Guide](https://electronjs.org/docs/tutorial/quick-start) within the Electron documentation.
 
