@@ -7,11 +7,21 @@ const {ipcRenderer} = require("electron");
 // selectively enable features needed in the rendering
 // process.
 
+if (localStorage.getItem('dark') === 'true')
+    document.documentElement.classList.add('dark');
+
 document.getElementById('download-button').addEventListener("click", function() {
+    this.blur();
+
+    let url = document.getElementById('url-input').value;
+
+    if (!url)
+        return;
+
     document.getElementById('status').innerText = 'Initializing';
 
     let params = {
-        url: document.getElementById('url-input').value,
+        url: url,
         coverSearch: false,
         coverSearchTitle: ''
     };
@@ -51,6 +61,16 @@ document.getElementById('cover-search').addEventListener('click', function () {
     else
         searchInputDisplay.style.display = 'none';
 });
+
+document.getElementById('theme-switch').onclick = function () {
+    let isDarkCurrent = document.documentElement.classList.contains('dark');
+
+    localStorage.setItem('dark', !isDarkCurrent);
+
+    isDarkCurrent
+        ? document.documentElement.classList.remove('dark')
+        : document.documentElement.classList.add('dark');
+};
 
 // updating application
 ipcRenderer.on('update_downloaded', () => {

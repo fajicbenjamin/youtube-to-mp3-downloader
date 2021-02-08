@@ -9,83 +9,99 @@
 
   <link href="tailwind.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100 dark:bg-gray-700">
 
-<div class="container mx-auto flex">
+<div class="container mx-auto flex flex-col">
 
-  <div class="flex-auto w-2/3 relative py-16 px-10">
+  <div class="flex flex-row">
+    <div class="flex-auto w-2/3 relative py-16 px-10">
 
-    <div class="text-2xl">
-      <p class="font-bold">Youtube to</p>
-      <p><span class="text-purple-700">MP3</span> <span class="font-extralight">downloader</span></p>
+      <div class="text-2xl">
+        <p class="font-bold dark:text-blue-200">Youtube to</p>
+        <p><span class="text-purple-700 dark:text-purple-400">MP3</span> <span class="font-extralight dark:text-blue-200">downloader</span></p>
+      </div>
+
+      <p class="my-5 text-gray-500 text-sm dark:text-gray-400">
+        Enter Youtube URL and start downloading as .mp3 files! You can also mark option to set album
+        artwork on the file by providing song (and possibly artist) name.
+      </p>
+
+      <div class="flex-auto">
+        <form class="relative">
+          <svg width="20" height="20" fill="currentColor" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" />
+          </svg>
+          <input class="focus:border-light-blue-500 focus:ring-1 focus:ring-light-blue-500 focus:outline-none w-full text-sm text-black placeholder-gray-500 border border-gray-200 rounded-md py-2 pl-10"
+                 type="text"
+                 aria-label="URL placeholder"
+                 placeholder="youtube.com/watch?v=pgN-vvVVxMA"
+                 id="url-input" />
+        </form>
+
+        <div>
+          <button class="hover:bg-purple-400 hover:text-light-purple-800 focus:outline-none rounded-md bg-purple-500 text-white text-sm font-medium px-4 py-2 my-5"
+                  id="download-button">
+            Download
+          </button>
+        </div>
+
+
+        <div class="flex mt-4 text-sm">
+          <label class="flex items-center">
+            <input type="checkbox" class="form-checkbox" id="cover-search">
+            <span class="ml-2 dark:text-blue-200">Search for album artwork</span>
+          </label>
+        </div>
+
+        <div id="cover-search-input" class="mt-2 w-56 hidden">
+          <input class="focus:border-light-blue-500 focus:ring-1 focus:ring-light-blue-500 focus:outline-none w-full text-sm text-black placeholder-gray-500 border border-gray-200 rounded-md py-2 pl-5"
+                 type="text"
+                 aria-label="Album artwork search"
+                 placeholder="Xxxtentacion Sad"
+                 id="cover-search-url" />
+        </div>
+
+      </div>
     </div>
 
-    <p class="my-5 text-gray-500 text-sm">
-      Enter Youtube URL and start downloading as .mp3 files! You can also mark option to set album
-      artwork on the file by providing song (and possibly artist) name.
-    </p>
-
-    <div class="flex-auto">
-      <form class="relative">
-        <svg width="20" height="20" fill="currentColor" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" />
-        </svg>
-        <input class="focus:border-light-blue-500 focus:ring-1 focus:ring-light-blue-500 focus:outline-none w-full text-sm text-black placeholder-gray-500 border border-gray-200 rounded-md py-2 pl-10"
-               type="text"
-               aria-label="URL placeholder"
-               placeholder="youtube.com/watch?v=pgN-vvVVxMA"
-               id="url-input" />
-      </form>
-
+    <div class="flex-auto w-1/3 py-16 px-5">
       <div>
-        <button class="hover:bg-light-purple-200 hover:text-light-purple-800 rounded-md bg-purple-500 text-white text-sm font-medium px-4 py-2 my-5"
-                id="download-button">
-          Download
-        </button>
+        <img src="./assets/app-icon/png/256.png"
+             alt="Cover"
+             id="song-artwork">
       </div>
 
-
-      <div class="flex mt-4 text-sm">
-        <label class="flex items-center">
-          <input type="checkbox" class="form-checkbox" id="cover-search">
-          <span class="ml-2">Search for album artwork</span>
-        </label>
+      <div class="text-center my-5 dark:text-blue-200">
+        <h2 class="font-extralight" id="song-artist"></h2>
+        <h1 class="font-semibold text-lg" id="song-title"></h1>
       </div>
 
-      <div id="cover-search-input" class="mt-2 w-56 hidden">
-        <input class="focus:border-light-blue-500 focus:ring-1 focus:ring-light-blue-500 focus:outline-none w-full text-sm text-black placeholder-gray-500 border border-gray-200 rounded-md py-2 pl-5"
-               type="text"
-               aria-label="Album artwork search"
-               placeholder="Xxxtentacion Sad"
-               id="cover-search-url" />
-      </div>
+      <div id="status" class="text-center text-sm dark:text-blue-200"></div>
 
     </div>
   </div>
 
-  <div class="flex-auto w-1/3 py-16 px-5">
-    <div>
-      <img src="./assets/app-icon/png/256.png"
-           alt="Cover"
-           id="song-artwork">
+  <div class="flex-auto w-full fixed bottom-0 ml-10 mr-10">
+    <!-- Switch Container -->
+    <div class="w-7 h-7 flex-auto items-center bg-gray-300 dark:bg-blue-200 rounded-full p-1 mb-2 mt-2 cursor-pointer">
+
+      <div id="theme-switch" class="w-8 h-8">
+        <svg width="20" height="20" class="fill-current text-black-600 dark:text-gray-700">
+          <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+        </svg>
+      </div>
+
     </div>
-
-    <div class="text-center my-5">
-      <h2 class="font-extralight" id="song-artist"></h2>
-      <h1 class="font-semibold text-lg" id="song-title"></h1>
-    </div>
-
-    <div id="status" class="text-center text-sm"></div>
-
+    <!-- Switch Container End -->
   </div>
+</div>
 
-  <!-- check for updates -->
-  <div id="update-box" class="fixed bottom-0 right-0 bg-white w-56 shadow-2xl p-2 mr-2 mb-2 rounded hidden">
-    <p class="text-sm">
-      There is update available. Do you want to update it now?
-    </p>
-    <button id="update-button" class="bg-purple-500 text-white text-sm rounded mt-1 p-1 float-right">Update</button>
-  </div>
+<!-- check for updates -->
+<div id="update-box" class="fixed bottom-0 right-0 bg-white dark:bg-gray-600 w-56 shadow-2xl p-2 mr-2 mb-2 rounded hidden">
+  <p class="text-sm dark:text-blue-200">
+    There is update available. Do you want to update it now?
+  </p>
+  <button id="update-button" class="bg-purple-500 text-white text-sm rounded mt-1 p-2 float-right">Update</button>
 </div>
 
 <!-- You can also require other files to run in this process -->
