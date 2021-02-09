@@ -3,6 +3,7 @@ const {app, BrowserWindow, ipcMain} = require('electron');
 const { autoUpdater } = require('electron-updater');
 
 const downloader = require('./src/downloader');
+const menuBuilder = require('./src/menuBuilder');
 
 function createWindow () {
   // Create the browser window.
@@ -19,6 +20,8 @@ function createWindow () {
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
+
+  menuBuilder.setMenu();
 }
 
 // This method will be called when Electron has finished

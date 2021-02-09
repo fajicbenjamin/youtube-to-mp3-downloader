@@ -7,7 +7,7 @@ const {ipcRenderer} = require("electron");
 // selectively enable features needed in the rendering
 // process.
 
-if (localStorage.getItem('dark') === 'true')
+if (localStorage.getItem('theme') === 'Dark')
     document.documentElement.classList.add('dark');
 
 document.getElementById('download-button').addEventListener("click", function() {
@@ -62,15 +62,17 @@ document.getElementById('cover-search').addEventListener('click', function () {
         searchInputDisplay.style.display = 'none';
 });
 
-document.getElementById('theme-switch').onclick = function () {
-    let isDarkCurrent = document.documentElement.classList.contains('dark');
+ipcRenderer.on('theme-switch', (event, theme) => {
+    let hasDark = document.documentElement.classList.contains('dark');
 
-    localStorage.setItem('dark', !isDarkCurrent);
-
-    isDarkCurrent
-        ? document.documentElement.classList.remove('dark')
-        : document.documentElement.classList.add('dark');
-};
+    if (theme === 'Dark' && !hasDark) {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('theme', theme)
+    } else if (theme === 'Light' && hasDark) {
+        document.documentElement.classList.remove('dark')
+        localStorage.setItem('theme', theme)
+    }
+});
 
 // updating application
 ipcRenderer.on('update_downloaded', () => {

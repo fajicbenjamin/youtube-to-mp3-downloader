@@ -10,7 +10,13 @@ const deezerApi = require('./deezerApi');
 
 const startDownload = async (params, event) => {
 
-    let info = await ytdl.getInfo(params.url);
+    let info = await ytdl.getInfo(params.url).catch(error => console.log(error));
+
+    if (!info) {
+        event.sender.send('download-status', 'Video not found');
+        return;
+    }
+
     let title = '';
 
     let songDataFromDeezer;
