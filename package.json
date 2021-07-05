@@ -1,11 +1,11 @@
 {
   "name": "youtube-to-mp3-downloader",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "A minimal Electron application for downloading MP3s from YouTube",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "package": "electron-builder build --publish never"
+    "package": "electron-builder build --publish always"
   },
   "repository": "github:fajicbenjamin/youtube-to-mp3-downloader",
   "license": "MIT",
