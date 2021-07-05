@@ -30,7 +30,7 @@
     "ffmpeg-static": "4.2.7",
     "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^7.0.1",
-    "ytdl-core": "4.4.5"
+    "ytdl-core": "^4.8.3"
   },
   "build": {
     "productName": "Youtube to MP3 Downloader",
