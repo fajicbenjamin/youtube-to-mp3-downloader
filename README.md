@@ -1,8 +1,12 @@
+<div align="center">
+
 ![logo](assets/app-icon/png/128.png)
 
 # Youtube to MP3 Downloader
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/fajicbenjamin/youtube-to-mp3-downloader) ![GitHub all releases](https://img.shields.io/github/downloads/fajicbenjamin/youtube-to-mp3-downloader/total) ![GitHub](https://img.shields.io/github/license/fajicbenjamin/youtube-to-mp3-downloader)
+  
+  </div>
 
 This is a minimal Electron application based on the [Quick Start Guide](https://electronjs.org/docs/tutorial/quick-start) within the Electron documentation.
 
