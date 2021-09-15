@@ -24,7 +24,7 @@
     "electron-builder": "22.9.1"
   },
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "browser-id3-writer": "^4.4.0",
     "electron-updater": "^4.3.5",
     "ffmpeg-static": "4.2.7",
