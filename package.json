@@ -20,7 +20,7 @@
     "url": "https://github.com/fajicbenjamin"
   },
   "devDependencies": {
-    "electron": "^11.1.0",
+    "electron": "^11.5.0",
     "electron-builder": "22.9.1"
   },
   "dependencies": {
