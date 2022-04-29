@@ -53,6 +53,10 @@ ipcRenderer.on('show-data', (event, arg) => {
     titleElement.innerText = arg.title;
 });
 
+ipcRenderer.on('playlist-status', (event, status) => {
+        document.getElementById('playlist').innerText = status;
+});
+
 document.getElementById('cover-search').addEventListener('click', function () {
     let searchInputDisplay = document.getElementById('cover-search-input');
 
