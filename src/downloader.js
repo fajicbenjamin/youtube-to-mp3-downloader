@@ -17,12 +17,15 @@ const startDownload = async (params, event) => {
         return;
     }
 
-    let title = '';
+    // trim title and try it against Deezer API if manual search is not given
+    let title = info.videoDetails.title
+        .replace(/ *\([^)]*\) */g, "") // remove parenthesis and what is inside
+        .replace(/[^a-zA-Z ]/g, "") // remove special characters
+        .replace(/(?<=^| ).(?=$| )/g, ""); // remove single character words
 
     let songDataFromDeezer;
 
-    if (params.coverSearch)
-        songDataFromDeezer = await deezerApi.getSongData(params.coverSearchTitle);
+    songDataFromDeezer = await deezerApi.getSongData(params.coverSearch ? params.coverSearchTitle : title);
 
     if (songDataFromDeezer) {
         title = `${songDataFromDeezer.artist.join(', ')} - ${songDataFromDeezer.title}`;
