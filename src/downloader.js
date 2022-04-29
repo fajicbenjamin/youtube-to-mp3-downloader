@@ -5,24 +5,50 @@ const ytdl = require('ytdl-core');
 const electron = require('electron');
 const path = require('path');
 const ID3Writer = require('browser-id3-writer');
+const ytpl = require('ytpl');
 
 const deezerApi = require('./deezerApi');
 
 const startDownload = async (params, event) => {
 
-    let info = await ytdl.getInfo(params.url).catch(error => console.log(error));
+    let playlist;
+
+    // fetch to see if playlist and download each song, otherwise just do single download
+    playlist = await ytpl(params.url).catch(error => console.log(error));
+
+    if (playlist && playlist.items.length) {
+
+        for (let i = 0; i < playlist.items.length; i++) {
+            event.sender.send('playlist-status', `Playlist ${i+1} / ${playlist.items.length}`)
+            let song = playlist.items[i];
+            await singleDownload({url: song.url}, event);
+        }
+
+    } else {
+
+        await singleDownload(params, event);
+    }
+}
+
+const singleDownload = async (params, event) => {
+
+    const info = await ytdl.getInfo(params.url).catch(error => console.log(error));
 
     if (!info) {
         event.sender.send('download-status', 'Video not found');
         return;
     }
 
-    let title = '';
+    // trim title and try it against Deezer API if manual search is not given
+    let title = info.videoDetails.title
+        .replace(/ *\([^)]*\) */g, " ") // remove parenthesis and what is inside
+        .replace(/[^A-Za-z0-9 ]/g, "") // remove special characters
+        .replace(/feat|feat.|ft.|[0-9]k/ig, "") // remove "feat" or stuff like "2K" "4K" etc.
+        .replace(/(?<=^| ).(?=$| )/g, ""); // remove single character words
 
     let songDataFromDeezer;
 
-    if (params.coverSearch)
-        songDataFromDeezer = await deezerApi.getSongData(params.coverSearchTitle);
+    songDataFromDeezer = await deezerApi.getSongData(params.coverSearch ? params.coverSearchTitle : title);
 
     if (songDataFromDeezer) {
         title = `${songDataFromDeezer.artist.join(', ')} - ${songDataFromDeezer.title}`;
