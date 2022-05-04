@@ -14,12 +14,13 @@ const startDownload = async (params, event) => {
     let playlist;
 
     // fetch to see if playlist and download each song, otherwise just do single download
-    playlist = await ytpl(params.url, { pages: 1 }).catch(error => console.log(error));
-    const playlistSize = playlist.estimatedItemCount;
+    playlist = await ytpl(params.url, { pages: 1 }).catch(error => console.log(error))
 
     if (playlist && playlist.items.length) {
 
+        const playlistSize = playlist.estimatedItemCount;
         let c = 0;
+
         while (true) {
             for (let i = 0; i < playlist.items.length; i++) {
                 event.sender.send('playlist-status', `Playlist ${++c} / ${playlistSize}`)
