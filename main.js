@@ -5,6 +5,8 @@ const { autoUpdater } = require('electron-updater');
 const downloader = require('./src/downloader');
 const menuBuilder = require('./src/menuBuilder');
 
+app.disableHardwareAcceleration();
+
 function createWindow () {
   // Create the browser window.
   const mainWindow = new BrowserWindow({

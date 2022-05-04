@@ -14,15 +14,26 @@ const startDownload = async (params, event) => {
     let playlist;
 
     // fetch to see if playlist and download each song, otherwise just do single download
-    playlist = await ytpl(params.url).catch(error => console.log(error));
+    playlist = await ytpl(params.url, { pages: 1 }).catch(error => console.log(error));
+    const playlistSize = playlist.estimatedItemCount;
 
     if (playlist && playlist.items.length) {
 
-        for (let i = 0; i < playlist.items.length; i++) {
-            event.sender.send('playlist-status', `Playlist ${i+1} / ${playlist.items.length}`)
-            let song = playlist.items[i];
-            await singleDownload({url: song.url}, event);
+        let c = 0;
+        while (true) {
+            for (let i = 0; i < playlist.items.length; i++) {
+                event.sender.send('playlist-status', `Playlist ${++c} / ${playlistSize}`)
+                let song = playlist.items[i];
+                await singleDownload({url: song.url}, event);
+            }
+
+            if (!playlist.continuation)
+                break;
+
+            playlist = await ytpl.continueReq(playlist.continuation);
         }
+
+        event.sender.send('playlist-status', 'Playlist complete');
 
     } else {
 
@@ -43,7 +54,7 @@ const singleDownload = async (params, event) => {
     let title = info.videoDetails.title
         .replace(/ *\([^)]*\) */g, " ") // remove parenthesis and what is inside
         .replace(/[^A-Za-z0-9 ]/g, "") // remove special characters
-        .replace(/feat|feat.|ft.|[0-9]k/ig, "") // remove "feat" or stuff like "2K" "4K" etc.
+        .replace(/feat|feat.|ft.|[0-9]k|hd/ig, "") // remove "feat" or stuff like "2K" "4K" etc.
         .replace(/(?<=^| ).(?=$| )/g, ""); // remove single character words
 
     let songDataFromDeezer;
@@ -55,7 +66,9 @@ const singleDownload = async (params, event) => {
 
         event.sender.send('show-data', songDataFromDeezer);
     } else {
-        title = info.videoDetails.title; // use video title as file title
+        // use video title as file title
+        title = info.videoDetails.title
+            .replace(/[^A-Za-z0-9 ]/g, ""); // replace special characters, since this will be saved to file system
     }
 
     let downloadPath = electron.app.getPath('downloads');
