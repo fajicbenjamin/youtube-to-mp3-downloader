@@ -1,6 +1,6 @@
 {
   "name": "youtube-to-mp3-downloader",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "A minimal Electron application for downloading MP3s from YouTube",
   "main": "main.js",
   "scripts": {
@@ -21,8 +21,8 @@
     "url": "https://github.com/fajicbenjamin"
   },
   "devDependencies": {
-    "electron": "^15.3.5",
-    "electron-builder": "22.9.1"
+    "electron": "^15.5.7",
+    "electron-builder": "^23.5.0"
   },
   "dependencies": {
     "axios": "^0.21.4",
