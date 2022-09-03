@@ -88,3 +88,9 @@ ipcRenderer.on('update_downloaded', () => {
 document.getElementById('update-button').addEventListener("click", function() {
     ipcRenderer.send('restart_app');
 });
+
+// deep linking start download
+ipcRenderer.on('deeplink_download', (event, url) => {
+    document.getElementById('url-input').value = url;
+    document.getElementById('download-button').click();
+});
