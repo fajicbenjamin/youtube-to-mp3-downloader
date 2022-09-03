@@ -98,11 +98,13 @@ app.whenReady().then(() => {
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
+    deepLinkUrl = '';
     if (BrowserWindow.getAllWindows().length === 0 || mainWindow === null) createWindow()
   })
 
   // Protocol handler for osx when app was already running
   app.on('open-url', function(event, url) {
+    if (!mainWindow) createWindow();
     event.preventDefault();
     deepLinkUrl = url;
     downloadFromDeepLink(deepLinkUrl);
