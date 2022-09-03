@@ -134,7 +134,7 @@ app.on('ready', function()  {
 function downloadFromDeepLink(deepLink) {
   const protocolClient = `${PROTOCOL_CLIENT}://`;
 
-  if (deepLink.indexOf(protocolClient) !== -1) {
+  if (deepLink.toString().indexOf(protocolClient) !== -1) {
       let param = deepLink.toString().substring(protocolClient.length);
       mainWindow.webContents.send('deeplink_download', param);
   }
