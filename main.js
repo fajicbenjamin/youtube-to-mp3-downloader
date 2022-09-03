@@ -5,8 +5,10 @@ const { autoUpdater } = require('electron-updater');
 const downloader = require('./src/downloader');
 const menuBuilder = require('./src/menuBuilder');
 
+const PROTOCOL_CLIENT = 'yt2mp3app';
+
 app.disableHardwareAcceleration();
-app.setAsDefaultProtocolClient('yt2mp3app');
+app.setAsDefaultProtocolClient(PROTOCOL_CLIENT);
 
 let deepLinkUrl
 let mainWindow
@@ -56,7 +58,8 @@ function createWindow () {
       deepLinkUrl = process.argv.slice(1)
     }
 
-    downloadFromDeepLink(deepLinkUrl);
+    if (deepLinkUrl) 
+        downloadFromDeepLink(deepLinkUrl);
   })
 
   // Open the DevTools.
@@ -129,8 +132,10 @@ app.on('ready', function()  {
 });
 
 function downloadFromDeepLink(deepLink) {
-  const protocolClient = 'yt2mp3app://';
-  let param = deepLink.toString().substring(protocolClient.length);
+  const protocolClient = `${PROTOCOL_CLIENT}://`;
 
-  mainWindow.webContents.send('deeplink_download', param);
+  if (deepLink.indexOf(protocolClient) !== -1) {
+      let param = deepLink.toString().substring(protocolClient.length);
+      mainWindow.webContents.send('deeplink_download', param);
+  }
 }
