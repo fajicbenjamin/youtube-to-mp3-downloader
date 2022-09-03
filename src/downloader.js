@@ -51,6 +51,8 @@ const singleDownload = async (params, event) => {
         return;
     }
 
+    let lengthSeconds = info.videoDetails.lengthSeconds;
+
     // trim title and try it against Deezer API if manual search is not given
     let title = info.videoDetails.title
         .replace(/ *\([^)]*\) */g, " ") // remove parenthesis and what is inside
@@ -81,7 +83,7 @@ const singleDownload = async (params, event) => {
 
     // Pass the returned paths and info into the function which will convert the mp4 tmp file into
     // the desired output mp3 file.
-    await convertMp4ToMp3(paths, event);
+    await convertMp4ToMp3(paths, event, lengthSeconds);
 
     // Remove the temp mp4 file.
     fs.unlinkSync(paths.filePath);
@@ -120,7 +122,7 @@ const getVideoAsMp4 = (urlLink, userProvidedPath, title, event) => {
     });
 };
 
-const convertMp4ToMp3 = (paths, event) => {
+const convertMp4ToMp3 = (paths, event, videoLength) => {
     // Tell the user we are starting to convert the file to mp3.
     event.sender.send('download-status', 'Converting...');
     // event.sender.send('progress-status', 0);
@@ -133,7 +135,13 @@ const convertMp4ToMp3 = (paths, event) => {
             .format('mp3')
             .audioBitrate(320)
             .on('progress', (progress) => {
-                event.sender.send('download-status', `Converting... [${progress.targetSize} kB]`);
+                let times = progress.timemark.split(':');
+                let seconds = +times[2];
+                seconds += (+times[1] * 60);
+                seconds += (+times[0] * 360);
+
+                let newVal = Math.floor((seconds / videoLength) * 100);
+                event.sender.send('download-status', `Converting... [${newVal}%]`);
             })
             .output(fs.createWriteStream(path.join(paths.folderPath, paths.fileTitle)))
             .on('end', () => {
