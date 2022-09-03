@@ -6,11 +6,11 @@ const downloader = require('./src/downloader');
 const menuBuilder = require('./src/menuBuilder');
 
 app.disableHardwareAcceleration();
+app.setAsDefaultProtocolClient('yt2mp3app');
 
 let deepLinkUrl
 let mainWindow
 
-// Force Single Instance Application
 const gotTheLock = app.requestSingleInstanceLock()
 if (gotTheLock) {
   app.on('second-instance', (e, argv) => {
@@ -21,7 +21,7 @@ if (gotTheLock) {
     if (process.platform === 'win32') {
       // Keep only command line / deep linked arguments
       deepLinkUrl = argv.slice(2)
-      downloadFromDeepLink(deepLinkUrl, mainWindow)
+      downloadFromDeepLink(deepLinkUrl)
     }
 
     if (mainWindow) {
@@ -54,15 +54,31 @@ function createWindow () {
     if (process.platform === 'win32') {
       // Keep only command line / deep linked arguments
       deepLinkUrl = process.argv.slice(1)
-      downloadFromDeepLink(deepLinkUrl, mainWindow)
     }
+
+    downloadFromDeepLink(deepLinkUrl);
   })
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
 
+  // Emitted when the window is closed.
+  mainWindow.on('closed', function() {
+    // Dereference the window object, usually you would store windows
+    // in an array if your app supports multi windows, this is the time
+    // when you should delete the corresponding element.
+    mainWindow = null
+  })
+
   menuBuilder.setMenu();
 }
+
+// Protocol handler for osx when creating first instance
+// only set deeplink url, and leave it to create window as usual
+app.on('open-url', function(event, url) {
+  event.preventDefault();
+  deepLinkUrl = url;
+})
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -84,6 +100,13 @@ app.whenReady().then(() => {
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0 || mainWindow === null) createWindow()
   })
+
+  // Protocol handler for osx when app was already running
+  app.on('open-url', function(event, url) {
+    event.preventDefault();
+    deepLinkUrl = url;
+    downloadFromDeepLink(deepLinkUrl);
+  })
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -92,11 +115,6 @@ app.whenReady().then(() => {
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
-
-if (!app.isDefaultProtocolClient('yt2mp3app')) {
-  // Define custom protocol handler. Deep linking works on packaged versions of the application!
-  app.setAsDefaultProtocolClient('yt2mp3app')
-}
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
@@ -108,7 +126,7 @@ app.on('ready', function()  {
   });
 });
 
-function downloadFromDeepLink(deepLink, mainWindow) {
+function downloadFromDeepLink(deepLink) {
   const protocolClient = 'yt2mp3app://';
   let param = deepLink.toString().substring(protocolClient.length);
 
