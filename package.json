@@ -27,7 +27,7 @@
   "dependencies": {
     "axios": "^0.21.4",
     "browser-id3-writer": "^4.4.0",
-    "electron-updater": "^4.3.9",
+    "electron-updater": "^5.2.1",
     "ffmpeg-static": "4.2.7",
     "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^7.0.1",
