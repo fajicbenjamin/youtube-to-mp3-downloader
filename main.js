@@ -47,7 +47,8 @@ function createWindow () {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
-    }
+    },
+    show: false
   });
 
   // and load the index.html of the app.
@@ -64,6 +65,10 @@ function createWindow () {
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
+
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+  })
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {
