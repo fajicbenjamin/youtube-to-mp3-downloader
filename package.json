@@ -37,7 +37,7 @@
   },
   "build": {
     "productName": "Youtube to MP3 Downloader",
-    "copyright": "Copyright © 2021-2022 Benjamin Fajić",
+    "copyright": "Copyright © 2021-2023 Benjamin Fajić",
     "asarUnpack": [
       "**/app/node_modules/ffmpeg-static/*"
     ],
