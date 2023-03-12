@@ -22,8 +22,8 @@ jobs:
     - name: Install dependencies
       run: npm install
     - name: Compile Tailwind
-      run: npx tailwindcss-cli@latest build -o tailwind.css
-      
+      run: npx tailwindcss -o tailwind.css --minify
+
     - name: Publish
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -40,8 +40,8 @@ jobs:
     - name: Install dependencies
       run: npm install
     - name: Compile Tailwind
-      run: npx tailwindcss-cli@latest build -o tailwind.css
-      
+      run: npx tailwindcss -o tailwind.css --minify
+
     - name: Publish
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

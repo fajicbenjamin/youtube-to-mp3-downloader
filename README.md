@@ -29,7 +29,7 @@ cd youtube-to-mp3-downloader
 npm install
 
 # Compile Tailwind
-npx tailwindcss-cli@latest build -o tailwind.css
+npx tailwindcss -o tailwind.css --minify
 
 # Run the app
 npm start

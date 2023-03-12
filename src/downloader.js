@@ -7,7 +7,7 @@ const path = require('path');
 const ID3Writer = require('browser-id3-writer');
 const ytpl = require('ytpl');
 
-const deezerApi = require('./deezerApi');
+const deezerApi = require('./deezer-api');
 
 const startDownload = async (params, event) => {
 

@@ -3,7 +3,7 @@ const {app, BrowserWindow, ipcMain} = require('electron');
 const { autoUpdater } = require('electron-updater');
 
 const downloader = require('./src/downloader');
-const menuBuilder = require('./src/menuBuilder');
+const menuBuilder = require('./src/menu-builder');
 
 const PROTOCOL_CLIENT = 'yt2mp3app';
 
@@ -47,7 +47,8 @@ function createWindow () {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
-    }
+    },
+    show: false
   });
 
   // and load the index.html of the app.
@@ -64,6 +65,10 @@ function createWindow () {
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
+
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+  })
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {
@@ -126,8 +131,8 @@ app.on('window-all-closed', function () {
 app.on('ready', function()  {
   autoUpdater.checkForUpdatesAndNotify();
 
-  autoUpdater.on('update-downloaded', () => {
-    BrowserWindow.getFocusedWindow().webContents.send('update_downloaded');
+  autoUpdater.on('update-downloaded', (info) => {
+    BrowserWindow.getFocusedWindow().webContents.send('update_downloaded', info);
   });
 });
 
