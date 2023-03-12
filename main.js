@@ -3,7 +3,7 @@ const {app, BrowserWindow, ipcMain} = require('electron');
 const { autoUpdater } = require('electron-updater');
 
 const downloader = require('./src/downloader');
-const menuBuilder = require('./src/menuBuilder');
+const menuBuilder = require('./src/menu-builder');
 
 const PROTOCOL_CLIENT = 'yt2mp3app';
 
@@ -131,8 +131,8 @@ app.on('window-all-closed', function () {
 app.on('ready', function()  {
   autoUpdater.checkForUpdatesAndNotify();
 
-  autoUpdater.on('update-downloaded', () => {
-    BrowserWindow.getFocusedWindow().webContents.send('update_downloaded');
+  autoUpdater.on('update-downloaded', (info) => {
+    BrowserWindow.getFocusedWindow().webContents.send('update_downloaded', info);
   });
 });
 

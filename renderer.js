@@ -79,13 +79,15 @@ ipcRenderer.on('theme-switch', (event, theme) => {
 });
 
 // updating application
-ipcRenderer.on('update_downloaded', () => {
+ipcRenderer.on('update_downloaded', (info, event) => {
     ipcRenderer.removeAllListeners('update_downloaded');
 
-    document.getElementById('update-box').classList.remove('hidden');
+    toggleModal();
+    document.getElementById('update-version').innerText = event.tag;
+    document.getElementById('changelog').innerHTML = event.releaseNotes;
 });
 
-document.getElementById('update-button').addEventListener("click", function() {
+document.getElementById('accept-update').addEventListener('click', function () {
     ipcRenderer.send('restart_app');
 });
 
@@ -94,3 +96,33 @@ ipcRenderer.on('deeplink_download', (event, url) => {
     document.getElementById('url-input').value = url;
     document.getElementById('download-button').click();
 });
+
+
+const overlay = document.querySelector('.modal-overlay')
+overlay.addEventListener('click', toggleModal)
+
+let closeModal = document.querySelectorAll('.modal-close')
+for (let i = 0; i < closeModal.length; i++) {
+    closeModal[i].addEventListener('click', toggleModal)
+}
+
+document.onkeydown = function(evt) {
+    evt = evt || window.event
+    let isEscape = false
+    if ("key" in evt) {
+        isEscape = (evt.key === "Escape" || evt.key === "Esc")
+    } else {
+        isEscape = (evt.keyCode === 27)
+    }
+    if (isEscape && document.body.classList.contains('modal-active')) {
+        toggleModal()
+    }
+};
+
+function toggleModal () {
+    const body = document.querySelector('body')
+    const modal = document.querySelector('.modal')
+    modal.classList.toggle('opacity-0')
+    modal.classList.toggle('pointer-events-none')
+    body.classList.toggle('modal-active')
+}
