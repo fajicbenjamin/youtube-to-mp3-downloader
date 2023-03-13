@@ -111,6 +111,7 @@ const getVideoAsMp4 = (urlLink, userProvidedPath, title, event) => {
             let newVal = Math.floor((downloaded / total) * 100);
             // event.sender.send('progress-status', newVal);
             event.sender.send('download-status', `Downloading... [${newVal}%]`)
+            event.sender.send('download-progress', newVal);
         });
 
         // Create write-able stream for the temp file and pipe the video stream into it.
@@ -142,10 +143,12 @@ const convertMp4ToMp3 = (paths, event, videoLength) => {
 
                 let newVal = Math.floor((seconds / videoLength) * 100);
                 event.sender.send('download-status', `Converting... [${newVal}%]`);
+                event.sender.send('download-progress', newVal);
             })
             .output(fs.createWriteStream(path.join(paths.folderPath, paths.fileTitle)))
             .on('end', () => {
                 // event.sender.send('progress-status', 100);
+                event.sender.send('download-progress', 0);
                 resolve();
             })
             .run();
