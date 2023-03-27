@@ -97,6 +97,10 @@ ipcRenderer.on('deeplink_download', (event, url) => {
     document.getElementById('download-button').click();
 });
 
+ipcRenderer.on('download-progress', (event, data) => {
+    ipcRenderer.send('download-progress', data);
+});
+
 
 const overlay = document.querySelector('.modal-overlay')
 overlay.addEventListener('click', toggleModal)

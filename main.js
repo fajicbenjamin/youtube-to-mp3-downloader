@@ -101,6 +101,10 @@ app.whenReady().then(() => {
     autoUpdater.quitAndInstall();
   });
 
+  ipcMain.on('download-progress', (event, data) => {
+    mainWindow.setProgressBar(data / 100);
+  })
+
   createWindow()
   
   app.on('activate', function () {
