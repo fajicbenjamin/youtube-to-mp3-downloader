@@ -32,6 +32,12 @@ document.getElementById('download-button').addEventListener("click", function() 
     ipcRenderer.send('download-invoked', params)
 });
 
+ipcRenderer.on('download-status', (event, status, songTitle) => {
+    if (status === 'Done') {
+        new window.Notification('Successful download', {body: `${songTitle} has been successfully downloaded`});
+    }
+});
+
 ipcRenderer.on('show-data', (event, arg) => {
     let artworkElement = document.getElementById('song-artwork');
     let artistElement = document.getElementById('song-artist');
