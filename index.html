@@ -86,7 +86,16 @@
         <h1 class="font-semibold text-lg" id="song-title"></h1>
       </div>
 
-      <div id="status" class="text-center text-sm dark:text-blue-200"></div>
+      <div class="relative mb-5 pt-1">
+        <div class="mb-4 flex h-2 overflow-hidden rounded bg-gray-100 dark:bg-gray-700 text-xs">
+          <div id="progress" class="progress-bar bg-green-500 h-2"></div>
+        </div>
+        <div class="mb-2 flex items-center justify-between text-xs">
+          <div id="progress-title" class="text-gray-500 dark:text-blue-200"></div>
+          <div id="progress-label" class="text-gray-500 dark:text-blue-200"></div>
+        </div>
+      </div>
+      
       <div id="playlist" class="text-center text-sm dark:text-blue-200"></div>
 
     </div>
