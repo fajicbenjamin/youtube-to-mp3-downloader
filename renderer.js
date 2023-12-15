@@ -18,8 +18,6 @@ document.getElementById('download-button').addEventListener("click", function() 
     if (!url)
         return;
 
-    document.getElementById('status').innerText = 'Initializing';
-
     let params = {
         url: url,
         coverSearch: false,
@@ -32,15 +30,6 @@ document.getElementById('download-button').addEventListener("click", function() 
     }
 
     ipcRenderer.send('download-invoked', params)
-});
-
-ipcRenderer.on('download-status', (event, status, songTitle) => {
-    if (status === 'Done') {
-        new window.Notification('Successful download', {body: `${songTitle} has been successfully downloaded`});
-        document.getElementById('status').innerText = '';
-    } else {
-        document.getElementById('status').innerText = status;
-    }
 });
 
 ipcRenderer.on('show-data', (event, arg) => {
@@ -99,6 +88,15 @@ ipcRenderer.on('deeplink_download', (event, url) => {
 
 ipcRenderer.on('download-progress', (event, data) => {
     ipcRenderer.send('download-progress', data);
+    document.getElementById('progress').style.width = data + '%';
+    document.getElementById('progress-label').innerText = data + '%';
+
+    if (data === 0) {
+        document.getElementById('progress-label').innerText = '';
+        document.getElementById('progress-title').innerText = '';
+    } else {
+        document.getElementById('progress-title').innerText = 'Progress';
+    }
 });
 
 

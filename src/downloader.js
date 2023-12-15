@@ -99,7 +99,7 @@ const singleDownload = async (params, event) => {
 
 const getVideoAsMp4 = (urlLink, userProvidedPath, title, event) => {
     // Tell the user we are starting to get the video.
-    event.sender.send('download-status', 'Downloading...');
+    event.sender.send('download-status', 'Downloading');
 
     return new Promise((resolve, reject) => {
         let fullPath = path.join(userProvidedPath, `tmp_${title}.mp4`);
@@ -108,9 +108,9 @@ const getVideoAsMp4 = (urlLink, userProvidedPath, title, event) => {
         let videoObject = ytdl(urlLink, {filter: 'audioonly'});
 
         videoObject.on('progress', (chunkLength, downloaded, total) => {
-            let newVal = Math.floor((downloaded / total) * 100);
+            let newVal = Math.floor((downloaded / total) * 100 / 2);
             // event.sender.send('progress-status', newVal);
-            event.sender.send('download-status', `Downloading... [${newVal}%]`)
+            event.sender.send('download-status', `Downloading`)
             event.sender.send('download-progress', newVal);
         });
 
@@ -125,7 +125,7 @@ const getVideoAsMp4 = (urlLink, userProvidedPath, title, event) => {
 
 const convertMp4ToMp3 = (paths, event, videoLength) => {
     // Tell the user we are starting to convert the file to mp3.
-    event.sender.send('download-status', 'Converting...');
+    event.sender.send('download-status', 'Converting');
     // event.sender.send('progress-status', 0);
 
     return new Promise(async (resolve, reject) => {
@@ -141,8 +141,8 @@ const convertMp4ToMp3 = (paths, event, videoLength) => {
                 seconds += (+times[1] * 60);
                 seconds += (+times[0] * 360);
 
-                let newVal = Math.floor((seconds / videoLength) * 100);
-                event.sender.send('download-status', `Converting... [${newVal}%]`);
+                let newVal = Math.floor((seconds / videoLength) * 100 / 2 + 50);
+                event.sender.send('download-status', `Converting`);
                 event.sender.send('download-progress', newVal);
             })
             .output(fs.createWriteStream(path.join(paths.folderPath, paths.fileTitle)))
