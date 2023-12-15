@@ -1,6 +1,6 @@
 {
   "name": "youtube-to-mp3-downloader",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "description": "A minimal Electron application for downloading MP3s from YouTube",
   "main": "main.js",
   "scripts": {
@@ -37,7 +37,7 @@
   },
   "build": {
     "productName": "Youtube to MP3 Downloader",
-    "copyright": "Copyright © 2021-2023 Benjamin Fajić",
+    "copyright": "Copyright © 2021-2024 Benjamin Fajić",
     "asarUnpack": [
       "**/app/node_modules/ffmpeg-static/*"
     ],
