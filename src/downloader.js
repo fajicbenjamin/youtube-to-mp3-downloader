@@ -25,7 +25,7 @@ const startDownload = async (params, event) => {
             for (let i = 0; i < playlist.items.length; i++) {
                 event.sender.send('playlist-status', `Playlist ${++c} / ${playlistSize}`)
                 let song = playlist.items[i];
-                await singleDownload({url: song.url}, event);
+                await singleDownload({url: song.url}, event, playlist?.title || "playlistOutput");
             }
 
             if (!playlist.continuation)
@@ -42,7 +42,7 @@ const startDownload = async (params, event) => {
     }
 }
 
-const singleDownload = async (params, event) => {
+const singleDownload = async (params, event, playlistTitle="") => {
 
     const info = await ytdl.getInfo(params.url).catch(error => console.log(error));
 
@@ -75,6 +75,14 @@ const singleDownload = async (params, event) => {
     }
 
     let downloadPath = electron.app.getPath('downloads');
+
+    // If there is a playlist we make a new folder for it in the downloads folder with the playlist title.
+    if(playlistTitle){
+        downloadPath += "/" + playlistTitle;
+        if (!fs.existsSync(downloadPath)){
+            fs.mkdirSync(downloadPath, { recursive: true });
+        }
+    }
 
     // Given the url of the video, the path in which to store the output, and the video title
     // download the video as an audio only mp4 and write it to a temp file then return
