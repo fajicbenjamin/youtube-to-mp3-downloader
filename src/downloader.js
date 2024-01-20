@@ -42,7 +42,7 @@ const startDownload = async (params, event) => {
     }
 }
 
-const singleDownload = async (params, event, playlistTitle="") => {
+const singleDownload = async (params, event, playlistTitle = "") => {
 
     const info = await ytdl.getInfo(params.url).catch(error => console.log(error));
 
