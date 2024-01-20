@@ -77,10 +77,10 @@ const singleDownload = async (params, event, playlistTitle="") => {
     let downloadPath = electron.app.getPath('downloads');
 
     // If there is a playlist we make a new folder for it in the downloads folder with the playlist title.
-    if(playlistTitle){
+    if (playlistTitle) {
         downloadPath += "/" + playlistTitle;
-        if (!fs.existsSync(downloadPath)){
-            fs.mkdirSync(downloadPath, { recursive: true });
+        if (!fs.existsSync(downloadPath)) {
+            fs.mkdirSync(downloadPath, {recursive: true});
         }
     }
 
