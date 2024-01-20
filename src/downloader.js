@@ -25,7 +25,7 @@ const startDownload = async (params, event) => {
             for (let i = 0; i < playlist.items.length; i++) {
                 event.sender.send('playlist-status', `Playlist ${++c} / ${playlistSize}`)
                 let song = playlist.items[i];
-                await singleDownload({url: song.url}, event, playlist?.title || "playlistOutput");
+                await singleDownload({url: song.url}, event, playlist.title || "playlistOutput");
             }
 
             if (!playlist.continuation)
