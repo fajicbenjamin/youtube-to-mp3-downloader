@@ -29,6 +29,10 @@ document.getElementById('download-button').addEventListener("click", function() 
         params.coverSearchTitle = document.getElementById('cover-search-url').value;
     }
 
+    if (document.getElementById('lower-bitrate').checked) {
+        params.lowerBitrate = true;
+    }
+
     ipcRenderer.send('download-invoked', params)
 });
 
