@@ -9,6 +9,9 @@ const ytpl = require('ytpl');
 
 const deezerApi = require('./deezer-api');
 
+const LOWER_BITRATE = 128;
+const HIGHER_BITRATE = 320;
+
 const startDownload = async (params, event) => {
 
     let playlist;
@@ -80,10 +83,11 @@ const singleDownload = async (params, event) => {
     // download the video as an audio only mp4 and write it to a temp file then return
     // the full path for the tmp file, the path in which its stored, and the title of the desired output.
     let paths = await getVideoAsMp4(params.url, downloadPath, title, event);
+    const bitRate = params.lowerBitrate ? LOWER_BITRATE : HIGHER_BITRATE;
 
     // Pass the returned paths and info into the function which will convert the mp4 tmp file into
     // the desired output mp3 file.
-    await convertMp4ToMp3(paths, event, lengthSeconds);
+    await convertMp4ToMp3(paths, event, lengthSeconds, bitRate);
 
     // Remove the temp mp4 file.
     fs.unlinkSync(paths.filePath);
@@ -123,7 +127,7 @@ const getVideoAsMp4 = (urlLink, userProvidedPath, title, event) => {
     });
 };
 
-const convertMp4ToMp3 = (paths, event, videoLength) => {
+const convertMp4ToMp3 = (paths, event, videoLength, bitRate) => {
     // Tell the user we are starting to convert the file to mp3.
     event.sender.send('download-status', 'Converting');
     // event.sender.send('progress-status', 0);
@@ -134,7 +138,7 @@ const convertMp4ToMp3 = (paths, event, videoLength) => {
         ffmpeg(paths.filePath)
             .setFfmpegPath(binaries)
             .format('mp3')
-            .audioBitrate(320)
+            .audioBitrate(bitRate)
             .on('progress', (progress) => {
                 let times = progress.timemark.split(':');
                 let seconds = +times[2];
