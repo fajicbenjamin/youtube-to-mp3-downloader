@@ -1,0 +1,14 @@
+{
+  "ytDlp": {
+    "version": "2026.08.19",
+    "repository": "yt-dlp/yt-dlp",
+    "assets": {
+      "win32-x64": { "name": "yt-dlp_win.zip", "sha256": "30b4c14aafab6082becff7881e41b76df46dc43ea7633479410a91e29da492bf", "layout": "directory", "executable": "yt-dlp.exe" },
+      "win32-arm64": { "name": "yt-dlp_win_arm64.zip", "sha256": "2ad49db7429a6204721f711a44199a8c9fa8d5df2183dd7fedc4ef6c9e2e50d3", "layout": "directory", "executable": "yt-dlp_arm64.exe" },
+      "darwin-x64": { "name": "yt-dlp_macos", "sha256": "0f192b7ec147ab6288885d6351d9ab67367640029b4377576ef46dd79cf7b202" },
+      "darwin-arm64": { "name": "yt-dlp_macos", "sha256": "0f192b7ec147ab6288885d6351d9ab67367640029b4377576ef46dd79cf7b202" },
+      "linux-x64": { "name": "yt-dlp_linux", "sha256": "58162f9bfdc27458ea47bfcb311cf47028f17d8154a8bf7d689861d46399230a" },
+      "linux-arm64": { "name": "yt-dlp_linux_aarch64", "sha256": "b16e4dab368a816cd05d477d698a605a6ae87ccee1c8ffd38fa21d7254141fcc" }
+    }
+  }
+}
