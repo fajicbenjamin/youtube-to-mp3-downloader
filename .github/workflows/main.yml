@@ -14,12 +14,55 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  prepare-release:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Create or reuse one draft before any asset uploads
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const { readFileSync } = require('node:fs');
+            const { version, build } = JSON.parse(readFileSync('package.json', 'utf8'));
+            const { owner, repo } = build.publish;
+            const tag = `v${version}`;
+            const releases = await github.paginate(github.rest.repos.listReleases, {
+              owner, repo, per_page: 100
+            });
+            // Match both tag forms accepted by electron-builder.
+            const matches = releases.filter(release =>
+              release.tag_name === tag || release.tag_name === version);
+            if (matches.some(release => !release.draft)) {
+              throw new Error(`${tag} is already published. Bump the app version before releasing again.`);
+            }
+            if (matches.length > 1) {
+              throw new Error(`Multiple drafts exist for ${tag}. Keep the draft with your release notes, delete the extra drafts, then rerun this workflow. All platform assets will be uploaded again.`);
+            }
+            const release = matches[0];
+            if (release) {
+              // Preserve the user's title and notes when rebuilding a draft.
+              await github.rest.repos.updateRelease({
+                owner, repo, release_id: release.id, target_commitish: context.sha
+              });
+              core.info(`Reusing draft: ${release.html_url}`);
+            } else {
+              const { data } = await github.rest.repos.createRelease({
+                owner, repo, tag_name: tag, name: version,
+                target_commitish: context.sha, draft: true, prerelease: false
+              });
+              core.info(`Created draft: ${data.html_url}`);
+            }
+
   package:
+    needs: prepare-release
     if: github.ref == 'refs/heads/main'
     strategy:
       fail-fast: false
-      # electron-builder creates/reuses the draft; serialize its two uploaders.
-      max-parallel: 1
+      # Both platforms reuse the draft created above. Even uploads within one
+      # electron-builder process can otherwise race to create separate drafts.
       matrix:
         include:
           - runner: windows-2025
