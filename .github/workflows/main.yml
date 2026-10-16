@@ -1,48 +1,46 @@
 name: Release
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
-
-  # Allows you to run this workflow manually from the Actions tab
+    branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
+# Keep merges from uploading to the same draft at the same time.
+concurrency:
+  group: application-release
+  cancel-in-progress: false
+
 jobs:
-
-  publish_on_mac:
-    runs-on: macos-13
+  package:
+    if: github.ref == 'refs/heads/main'
+    strategy:
+      fail-fast: false
+      # electron-builder creates/reuses the draft; serialize its two uploaders.
+      max-parallel: 1
+      matrix:
+        include:
+          - runner: windows-2025
+            arch: x64
+            platform: win
+          - runner: macos-15
+            arch: arm64
+            platform: mac
+    runs-on: ${{ matrix.runner }}
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@master
-      with:
-        node-version: 18
-        
-    - name: Install dependencies
-      run: npm install
-    - name: Compile Tailwind
-      run: npx tailwindcss -o tailwind.css --minify
-
-    - name: Publish
-      env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-      run: npm run publish
-
-  publish_on_win:
-    runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@v2       
-    - uses: actions/setup-node@master
-      with:
-        node-version: 18
-    
-    - name: Install dependencies
-      run: npm install
-    - name: Compile Tailwind
-      run: npx tailwindcss -o tailwind.css --minify
-
-    - name: Publish
-      env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-      run: npm run publish
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          architecture: ${{ matrix.arch }}
+      - name: Install exact dependencies and tools
+        run: npm ci
+      - name: Package and upload to draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EP_DRAFT: 'true'
+        run: npm run publish -- --${{ matrix.platform }} --${{ matrix.arch }}

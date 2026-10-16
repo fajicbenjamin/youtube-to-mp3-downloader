@@ -1,126 +1,63 @@
-const { app, Menu } = require('electron')
+const { app, Menu } = require('electron');
 
-const isMac = process.platform === 'darwin'
+let appMenu;
 
+function setMenu(actions = {}) {
+    appMenu = Menu.buildFromTemplate([
+        {
+            label: 'Update yt-dlp now',
+            enabled: Boolean(actions.updateDownloadEngine),
+            click: () => actions.updateDownloadEngine?.()
+        },
+        {
+            label: 'Restore bundled yt-dlp',
+            enabled: Boolean(actions.restoreDownloadEngine),
+            click: () => actions.restoreDownloadEngine?.()
+        },
+        { type: 'separator' },
+        {
+            label: 'About YouTube to MP3',
+            enabled: Boolean(actions.showAbout),
+            click: () => actions.showAbout?.()
+        }
+    ]);
 
-const template = [
-    // { role: 'appMenu' }
-    ...(isMac ? [{
-        label: app.name,
-        submenu: [
-            { role: 'about' },
-            { type: 'separator' },
-            { role: 'services' },
-            { type: 'separator' },
-            { role: 'hide' },
-            { role: 'hideothers' },
-            { role: 'unhide' },
-            { type: 'separator' },
-            { role: 'quit' }
-        ]
-    }] : []),
-    // { role: 'fileMenu' }
-    {
-        label: 'File',
-        submenu: [
-            isMac ? { role: 'close' } : { role: 'quit' }
-        ]
-    },
-    // { role: 'editMenu' }
-    {
-        label: 'Edit',
-        submenu: [
-            { role: 'undo' },
-            { role: 'redo' },
-            { type: 'separator' },
-            { role: 'cut' },
-            { role: 'copy' },
-            { role: 'paste' },
-            ...(isMac ? [
-                { role: 'pasteAndMatchStyle' },
-                { role: 'delete' },
-                { role: 'selectAll' },
+    // Windows/Linux have only the in-app options button. macOS keeps its
+    // system menu so standard editing and window keyboard shortcuts work.
+    Menu.setApplicationMenu(process.platform === 'darwin' ? Menu.buildFromTemplate([
+        {
+            label: app.name,
+            submenu: [
+                { label: 'About YouTube to MP3', click: () => actions.showAbout?.() },
                 { type: 'separator' },
-                {
-                    label: 'Speech',
-                    submenu: [
-                        { role: 'startSpeaking' },
-                        { role: 'stopSpeaking' }
-                    ]
-                }
-            ] : [
-                { role: 'delete' },
+                { role: 'services' },
                 { type: 'separator' },
-                { role: 'selectAll' }
-            ])
-        ]
-    },
-    // { role: 'viewMenu' }
-    {
-        label: 'View',
-        submenu: [
-            { role: 'reload' },
-            { role: 'forceReload' },
-            // { role: 'toggleDevTools' },
-            { type: 'separator' },
-            { role: 'resetZoom' },
-            { role: 'zoomIn' },
-            { role: 'zoomOut' },
-            { type: 'separator' },
-            {
-                label: 'Theme',
-                submenu: [
-                    {
-                        label: 'Light',
-                        click: function (menuItem, browserWindow, event) {
-                            browserWindow.webContents.send('theme-switch', 'Light')
-                        }
-                    },
-                    {
-                        label: 'Dark',
-                        click: function (menuItem, browserWindow, event) {
-                            browserWindow.webContents.send('theme-switch', 'Dark')
-                        }
-                    }
-                ]}
-            // { role: 'togglefullscreen' }
-        ]
-    },
-    // { role: 'windowMenu' }
-    {
-        label: 'Window',
-        submenu: [
-            { role: 'minimize' },
-            { role: 'zoom' },
-            ...(isMac ? [
+                { role: 'hide' },
+                { role: 'hideOthers' },
+                { role: 'unhide' },
                 { type: 'separator' },
-                { role: 'front' },
-                { type: 'separator' },
-                { role: 'window' }
-            ] : [
-                { role: 'close' }
-            ])
-        ]
-    },
-    {
-        role: 'help',
-        submenu: [
-            {
-                label: 'Learn More',
-                click: async () => {
-                    const { shell } = require('electron')
-                    await shell.openExternal('https://electronjs.org')
-                }
-            }
-        ]
-    }
-]
-
-const setMenu = () => {
-    const menu = Menu.buildFromTemplate(template)
-    Menu.setApplicationMenu(menu)
+                { role: 'quit' }
+            ]
+        },
+        { role: 'editMenu' },
+        { role: 'windowMenu' }
+    ]) : null);
 }
 
-module.exports = {
-    setMenu
+function showAppMenu(window, position) {
+    if (!appMenu || window.isDestroyed()) return Promise.resolve();
+    const { width, height } = window.getContentBounds();
+    const coordinate = (value, fallback, limit) => Math.max(0, Math.min(
+        Number.isFinite(value) ? Math.round(value) : fallback, limit - 1
+    ));
+    return new Promise((resolve) => {
+        appMenu.popup({
+            window,
+            x: coordinate(position?.x, 12, width),
+            y: coordinate(position?.y, 40, height),
+            callback: resolve
+        });
+    });
 }
+
+module.exports = { setMenu, showAppMenu };

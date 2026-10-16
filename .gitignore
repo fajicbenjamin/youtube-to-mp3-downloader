@@ -1,3 +1,5 @@
 node_modules
 .idea
 dist
+vendor/downloader/
+vendor/licenses/

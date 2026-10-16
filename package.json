@@ -1,11 +1,16 @@
 {
   "name": "youtube-to-mp3-downloader",
-  "version": "0.4.9",
+  "version": "0.5.0",
   "description": "A minimal Electron application for downloading MP3s from YouTube",
   "main": "main.js",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
+    "postinstall": "node scripts/prepare-downloader.js",
+    "setup:downloader": "node scripts/prepare-downloader.js",
     "start": "electron .",
-    "package": "electron-builder build",
+    "package": "electron-builder build --publish never",
     "publish": "electron-builder build --publish always"
   },
   "repository": "github:fajicbenjamin/youtube-to-mp3-downloader",
@@ -21,27 +26,45 @@
     "url": "https://github.com/fajicbenjamin"
   },
   "devDependencies": {
-    "electron": "^24.8.5",
-    "electron-builder": "^24.0.0",
-    "tailwindcss": "^3.2.7"
+    "electron": "^44.8.0",
+    "electron-builder": "^26.15.3"
   },
   "dependencies": {
-    "@distube/ytdl-core": "^4.15.8",
-    "axios": "1.7.4",
+    "axios": "1.20.0",
     "browser-id3-writer": "^4.4.0",
-    "electron-updater": "^5.2.1",
-    "ffmpeg-static": "4.2.7",
-    "fluent-ffmpeg": "^2.1.2",
-    "fs-extra": "^7.0.1",
-    "ytpl": "^2.3.0"
+    "electron-updater": "^6.8.9",
+    "ffmpeg-static": "^5.3.0",
+    "yauzl": "^3.4.0",
+    "youtubei.js": "^18.1.0"
   },
   "build": {
+    "beforePack": "scripts/before-pack.js",
+    "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
+    "files": [
+      "main.js", "preload.js", "renderer.js", "index.html", "styles.css",
+      "src/**/*", "assets/**/*", "package.json", "LICENSE"
+    ],
     "productName": "Youtube to MP3 Downloader",
     "copyright": "Copyright © 2021-2025 Benjamin Fajić",
     "asarUnpack": [
-      "**/app/node_modules/ffmpeg-static/*"
+      "node_modules/ffmpeg-static/**"
+    ],
+    "electronFuses": {
+      "runAsNode": true
+    },
+    "protocols": [
+      {
+        "name": "YouTube to MP3",
+        "schemes": [
+          "yt2mp3app"
+        ]
+      }
     ],
     "mac": {
+      "extraResources": [
+        { "from": "vendor/downloader/darwin-${arch}", "to": "downloader", "filter": ["yt-dlp", "manifest.json"] },
+        { "from": "vendor/licenses/darwin-${arch}", "to": "licenses", "filter": ["THIRD_PARTY_LICENSES.txt"] }
+      ],
       "target": [
         "dmg"
       ],
@@ -62,11 +85,18 @@
       ]
     },
     "win": {
+      "extraResources": [
+        { "from": "vendor/downloader/win32-${arch}", "to": "downloader", "filter": ["runtime/**/*", "runtime-manifest.json", "manifest.json"] },
+        { "from": "vendor/licenses/win32-${arch}", "to": "licenses", "filter": ["THIRD_PARTY_LICENSES.txt"] }
+      ],
       "target": [
         "nsis"
-      ],
-      "publish": [
-        "github"
+      ]
+    },
+    "linux": {
+      "extraResources": [
+        { "from": "vendor/downloader/linux-${arch}", "to": "downloader", "filter": ["yt-dlp", "manifest.json"] },
+        { "from": "vendor/licenses/linux-${arch}", "to": "licenses", "filter": ["THIRD_PARTY_LICENSES.txt"] }
       ]
     },
     "nsis": {
@@ -76,7 +106,8 @@
     "publish": {
       "provider": "github",
       "owner": "fajicbenjamin",
-      "repo": "youtube-to-mp3-downloader"
+      "repo": "youtube-to-mp3-downloader",
+      "releaseType": "draft"
     }
   }
 }
